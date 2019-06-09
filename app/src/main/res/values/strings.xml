@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">GesCoB</string>
+
+    <string name="register">REGISTER</string>
+    <string name="login_email_hint">Username</string>
+    <string name="login_password_hint">Password</string>
+    <string name="signup_login_hint">Already have an account? Sign In</string>
+    <string name="login_signup_hint">Don\'t have an account? Sign Up</string>
+    <string name="login_name_hint">Name</string>
+    <string name="login_mobile_number_hint">Mobile Number</string>
+    <string name="title_activity_main">Dashboard</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Welcome to GesCoB</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_change_password">Change Password</string>
+    <string name="menu_reload">Loader View</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="menu_logout">Logout</string>
+
+
+    <string name="error_username">Empty username or invalid length must have at least 4 characters</string>
+    <string name="error_password">Empty password or invalid length must have at least 4 characters</string>
+    <string name="menssage_auth">Authenticating...</string>
+    <string name="menssage_auth_alert">Username y/o Password invalid</string>
+    <string name="menssage_auth_success">Welcome to GesCoB : </string>
+    <string name="document">Document</string>
+    <string name="client">Client</string>
+    <string name="estado_suministro">Estado Suministro</string>
+    <string name="cargo">Cargo</string>
+    <string name="deparment">Deparment</string>
+    <string name="city">City</string>
+    <string name="distric">Distric</string>
+    <string name="view">View</string>
+    <string name="address">Address</string>
+    <string name="menssage_loader_view">Loader Visit...</string>
+    <string name="menssage_count_visit">You have a total of %s visits assigned.</string>
+    <string name="destroy_session">destroying the session ...</string>
+    <string name="change_password_text">Change Password</string>
+    <string name="change_password_title_text">Option for password change</string>
+    <string name="enter_old_password_text">Enter old Password</string>
+    <string name="enter_new_password1_text">Enter new Password</string>
+    <string name="enter_new_password2_text">Enter the new password again</string>
+    <string name="change_password_button">¿Change Password?</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="password_no_equals">password is not the same</string>
+
+
+</resources>
