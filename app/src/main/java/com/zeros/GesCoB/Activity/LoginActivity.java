@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,30 +28,36 @@ import com.zeros.GesCoB.R;
 import com.zeros.GesCoB.Presenter.*;
 import com.zeros.GesCoB.database.ConexionSQLiteHelper;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, Contract<User>, Contract.Users {
+public class LoginActivity extends AppCompatActivity implements Contract<User>, Contract.Users {
 
-
+    private static final String TAG = "ejemplo";
     Button loginButton;
-    TextView _username, _password,fotgotButton;
+    TextView _username, _password, fotgotButton;
     private final UserPresenter userPresenter = new UserPresenter();
     public static final String EXTRA_MESSAGE = "com.zeros.GesCoB.panel";
-    ConexionSQLiteHelper conn=new ConexionSQLiteHelper(this);
+    ConexionSQLiteHelper conn;
     private UserPresenter user;
     private int id;
     private Context context;
+    private ConfigPresenter configPresenter = new ConfigPresenter();
 
 
     Activity activity = new Activity();
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        conn = new ConexionSQLiteHelper(this);
         context = this;
         setContentView(R.layout.activity_login);
         _username = (TextView) findViewById(R.id.editTextUsername);
@@ -57,52 +65,112 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginButton = (Button) findViewById(R.id.cirLoginButton);
         fotgotButton = (TextView) findViewById(R.id.fotgotButton);
         this.loginStart();
-        loginButton.setOnClickListener(this);
-
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean valid = validate(_username.getText().toString().toLowerCase(),_password.getText().toString().toLowerCase());
+                if(valid){
+                    user = new UserPresenter(_username.getText().toString().toLowerCase().trim(),_password.getText().toString().toLowerCase().trim());
+                    send();
+                }
+            }
+        });
+        fotgotButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fotgotPassword();
+            }
+        });
     }
 
 
-    @Override
-    public void onClick(View v) {
 
-        if(v.getId() == R.id.cirLoginButton){
-            boolean valid = validate(_username.getText().toString().toLowerCase(),_password.getText().toString().toLowerCase());
-            if(valid){
-                this.user = new UserPresenter(_username.getText().toString().toLowerCase().trim(),_password.getText().toString().toLowerCase().trim());
-                this.send();
-            }
-        }else{
-            LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
-            View mView = layoutInflaterAndroid.inflate(R.layout.fotgot_password, null);
-            AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(context,R.style.Theme_AppCompat_DayNight_Dialog_Alert)
-                    .setTitle(getString(R.string.change_password_text))
-                    .setCancelable(false);
-            alertDialogBuilderUserInput.setView(mView);
+    public void fotgotPassword(){
 
-            final EditText username = (EditText) mView.findViewById(R.id.usernameText);
-            final EditText password = (EditText) mView.findViewById(R.id.emailText);
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
+        View mView = layoutInflaterAndroid.inflate(R.layout.fotgot_password, null);
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(context,R.style.Theme_AppCompat_DayNight_Dialog_Alert)
+                .setTitle(getString(R.string.change_password_text))
+                .setCancelable(false);
+        alertDialogBuilderUserInput.setView(mView);
 
-            alertDialogBuilderUserInput
-                    .setPositiveButton(getString(R.string.change_password_button), new DialogInterface.OnClickListener() {
-                        @Override public void onClick(DialogInterface dialogBox, int id) {}
-                    })
-                    .setNegativeButton(getString(R.string.cancel_button),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialogBox, int id) {
-                                    dialogBox.cancel();
+        final EditText username = (EditText) mView.findViewById(R.id.usernameText);
+        final EditText email = (EditText) mView.findViewById(R.id.emailText);
+
+        alertDialogBuilderUserInput
+                .setPositiveButton(getString(R.string.change_password_button), new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialogBox, int id) {}
+                })
+                .setNegativeButton(getString(R.string.cancel_button),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                dialogBox.cancel();
+                            }
+                        });
+
+        final AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+        alertDialogAndroid.show();
+
+        Button button = alertDialogAndroid.getButton(AlertDialog.BUTTON_POSITIVE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean r1 = false, r2 = false;
+                if(username.getText().toString().length() > 4){
+                    username.setError(null);
+                    r1 = true;
+                }else{
+                    username.setError(getString(R.string.error_username));
+                }
+
+                if( android.util.Patterns.EMAIL_ADDRESS.matcher(email.getText().toString().trim()).matches()){
+                    email.setError(null);
+                    r2 = true;
+                }else{
+                    email.setError(getString(R.string.error_email));
+                }
+
+                if(r1 && r2){
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder
+                            .setMessage(getString(R.string.question_modal))
+                            .setPositiveButton(getString(R.string.success_button),  new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialog, int id) {
+                                    Call<com.zeros.GesCoB.Model.Response> list = ApiClient.getInstance().getApi().fotgotPassword("12345",username.getText().toString().trim(),email.getText().toString().trim());
+                                    list.enqueue(new Callback<com.zeros.GesCoB.Model.Response>() {
+                                        @Override
+                                        public void onResponse(Call<com.zeros.GesCoB.Model.Response> call, Response<com.zeros.GesCoB.Model.Response> response) {
+                                            String string = getString(R.string.send_auth);
+                                            activity.start(string,2000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
+                                            if(!response.body().isError()){
+                                                activity.menssage(getString(R.string.change_password_success),Color.GREEN,context);
+                                                Toast.makeText(context,getText(R.string.fotgot_success),Toast.LENGTH_LONG).show();
+                                            }else{
+                                                Toast.makeText(context,getText(R.string.fotgot_error),Toast.LENGTH_LONG).show();
+                                            }
+                                            alertDialogAndroid.dismiss();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<com.zeros.GesCoB.Model.Response> call, Throwable t) {
+                                            Toast.makeText(getBaseContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                                            call.cancel();
+                                            alertDialogAndroid.dismiss();
+                                        }
+                                    });
                                 }
-                            });
-
-            final AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
-            alertDialogAndroid.show();
-            Button button = alertDialogAndroid.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                            })  .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,int id) {
+                            dialog.cancel();
+                            alertDialogAndroid.dismiss();
+                        }
+                    }).show();
 
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override
@@ -130,7 +198,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void send() {
-        Call<com.zeros.GesCoB.Model.Response> list =  ApiClient.getInstance().getApi().login(user);
+        Call<com.zeros.GesCoB.Model.Response> list =  ApiClient.getInstance().getApi().login("123456",user);
         list.enqueue(new Callback<com.zeros.GesCoB.Model.Response>() {
             @Override
             public void onResponse(Call<com.zeros.GesCoB.Model.Response> call, Response<com.zeros.GesCoB.Model.Response> response) {
@@ -142,7 +210,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             @Override
             public void onFailure(Call<com.zeros.GesCoB.Model.Response> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_LONG).show();
                 Log.d("network: ", "onFailure: "+t.getMessage());
                 call.cancel();
             }
@@ -219,7 +287,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             toast.show();
         }else{
             this.insert(this.user);
+            this.activity.loader_config(context,userPresenter,getString(R.string.config_auth),conn);
             this.activityNew();
         }
     }
+
+
 }

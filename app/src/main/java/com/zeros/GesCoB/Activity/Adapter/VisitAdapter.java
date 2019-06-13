@@ -17,6 +17,8 @@ import java.util.List;
 
 public class VisitAdapter extends RecyclerView.Adapter<VisitAdapter.ViewHolder>  implements  Filterable{
     private List<VisitPresenter> visitaPresenters;
+    private Context context;
+
     private Contract.OnVisitListener onVisitListener;
     private List<VisitPresenter> visitAdaptersFiltered;
     private VisitAdapterListener listener;
@@ -134,6 +136,5 @@ public class VisitAdapter extends RecyclerView.Adapter<VisitAdapter.ViewHolder> 
     public interface VisitAdapterListener {
         void onContactSelected(VisitPresenter visitPresenter);
     }
-    
 
 }

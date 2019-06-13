@@ -44,7 +44,7 @@ public class Visit extends QuerysLite<Visit> {
     public float facturas_acordadas;
     public String pago_datafono;
     public float estado_visita;
-    public float orden;
+    public int orden;
 
     public Visit(){
 
@@ -60,7 +60,7 @@ public class Visit extends QuerysLite<Visit> {
         this.barrio = barrio;
     }
 
-    public Visit(String id_visita, String nic, String nis, String departamento, String municipio, String corregimiento, String barrio, String tipo_via, String nombre_calle, String duplicador, String nro_via, String cgv, String direccion, String cliente, String cedula, String telefono, String tarifa, String estado_suministro, String ruta, String itinerario_lectura, String aol_finca, String medidor, String tipo_aparato, String marca_aparato, float deuda_energia, float deuda_terceros, float deuda_financiada, float facturas_vencidas, float facturas_acordadas, String pago_datafono, float estado_visita, float orden) {
+    public Visit(String id_visita, String nic, String nis, String departamento, String municipio, String corregimiento, String barrio, String tipo_via, String nombre_calle, String duplicador, String nro_via, String cgv, String direccion, String cliente, String cedula, String telefono, String tarifa, String estado_suministro, String ruta, String itinerario_lectura, String aol_finca, String medidor, String tipo_aparato, String marca_aparato, float deuda_energia, float deuda_terceros, float deuda_financiada, float facturas_vencidas, float facturas_acordadas, String pago_datafono, float estado_visita, int orden) {
         this.id_visita = id_visita;
         this.nic = nic;
         this.nis = nis;
@@ -224,7 +224,7 @@ public class Visit extends QuerysLite<Visit> {
         return estado_visita;
     }
 
-    public float getOrden() {
+    public int getOrden() {
         return orden;
     }
 
@@ -354,7 +354,7 @@ public class Visit extends QuerysLite<Visit> {
         this.estado_visita = estado_visita;
     }
 
-    public void setOrden(float orden) {
+    public void setOrden(int orden) {
         this.orden = orden;
     }
 

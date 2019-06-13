@@ -1,24 +1,31 @@
 package com.zeros.GesCoB.Activity;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +35,6 @@ import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -39,13 +45,14 @@ import com.zeros.GesCoB.Contract.Activity;
 import com.zeros.GesCoB.Contract.Contract;
 import com.zeros.GesCoB.Model.Visit;
 import com.zeros.GesCoB.Presenter.ApiClient;
+import com.zeros.GesCoB.Presenter.ConfigPresenter;
 import com.zeros.GesCoB.Presenter.UserPresenter;
 import com.zeros.GesCoB.Presenter.VisitPresenter;
 import com.zeros.GesCoB.R;
 import com.zeros.GesCoB.database.ConexionSQLiteHelper;
 
-
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -54,25 +61,27 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Contract<Visit>, Contract.OnVisitListener, View.OnClickListener, VisitAdapter.VisitAdapterListener {
 
-     private static final String TAG = "ejemplo";
-    public static final String EXTRA_MESSAGE = "com.zeros.GesCoB.person";
-
-    ConexionSQLiteHelper conn=new ConexionSQLiteHelper(this);
+    ConexionSQLiteHelper conn;
     private final VisitPresenter visitaPresenter = new VisitPresenter();
     private int id;
     private String username, password;
     private RecyclerView reyclerViewVisit;
-    private  Contract.OnVisitListener onVisitListener;
+    private Contract.OnVisitListener onVisitListener;
     Activity activity = new Activity();
     Context context;
     String string;
     private VisitAdapter mAdapter;
     private SearchView searchView;
 
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         context = this;
+        conn = new ConexionSQLiteHelper(this);
         setContentView(R.layout.activity_main);
         this.onVisitListener = this;
         this.id = getIntent().getExtras().getInt("id");
@@ -95,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        activity.changeTextViewNavigation(navigationView,getString(R.string.login_email_hint)+": "+this.username,R.id.nameUserView);
+        activity.changeTextViewNavigation(navigationView, getString(R.string.login_email_hint) + ": " + this.username, R.id.nameUserView);
 
         reyclerViewVisit = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -110,20 +119,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         whiteNotificationBar(reyclerViewVisit);
 
         string = getString(R.string.menssage_loader_view);
-        activity.start(string,3000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
-        Cursor cursor = this.query(visitaPresenter,"SELECT *FROM "+Config.DB_TABLE_VISIT,null);
-        Toast.makeText(context,"Loader API..."+cursor.getCount(),Toast.LENGTH_SHORT).show();
-        if(!existList()){
+        activity.start(string, 3000, R.style.Theme_AppCompat_DayNight_Dialog_Alert, context);
+        Cursor cursor = this.query(visitaPresenter, "SELECT *FROM " + Config.DB_TABLE_VISIT, null);
+        Toast.makeText(context, "Loader API..." + cursor.getCount(), Toast.LENGTH_SHORT).show();
+        if (!existList()) {
             //Toast.makeText(context,"Loader API...",Toast.LENGTH_SHORT).show();
             this.send();
-        }else{
-            Toast.makeText(context,"Loader DB...",Toast.LENGTH_SHORT).show();
-           this.cargarList();
+        } else {
+            Toast.makeText(context, "Loader DB...", Toast.LENGTH_SHORT).show();
+            this.cargarList();
         }
+
     }
 
-
-
+   @RequiresApi(api = Build.VERSION_CODES.N)
    public void cargarList(){
        Cursor cursor = this.query(visitaPresenter,"SELECT *FROM "+Config.DB_TABLE_VISIT,null);
        List<Visit> visitList = new ArrayList<>();
@@ -154,11 +163,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void addList(List<Visit> visitList){
+        visitList.sort(new Comparator<Visit>() {
+            @Override
+            public int compare(Visit o1, Visit o2) {
+                return new Integer(o1.getOrden()).compareTo(new Integer(o2.getOrden()));
+            }
+        });
         mAdapter = new VisitAdapter(getData(visitList),onVisitListener,this);
         reyclerViewVisit.setAdapter(mAdapter);
     }
-
 
 
     @Override
@@ -219,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -236,6 +253,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.nav_refresh_view :{
                 this.refresh();
+                break;
+            }
+            case R.id.nav_refresh_vonfig:{
+                this.activity.loader_config(context,new UserPresenter(username,password),getString(R.string.config_auth),conn);
                 break;
             }
             case R.id.nav_change_password :{
@@ -277,11 +298,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                 builder
-                                        .setMessage("Are you sure?")
-                                        .setPositiveButton("Yes",  new DialogInterface.OnClickListener() {
+                                        .setMessage(getString(R.string.question_modal))
+                                        .setPositiveButton(getString(R.string.success_button),  new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(final DialogInterface dialog, int id) {
-                                                Call<com.zeros.GesCoB.Model.Response> list = ApiClient.getInstance().getApi().changePassword(username,password,newPassword1.getText().toString());
+                                                Call<com.zeros.GesCoB.Model.Response> list = ApiClient.getInstance().getApi().changePassword("12345",username,password,newPassword1.getText().toString());
                                                 list.enqueue(new Callback<com.zeros.GesCoB.Model.Response>() {
                                                     @Override
                                                     public void onResponse(Call<com.zeros.GesCoB.Model.Response> call, Response<com.zeros.GesCoB.Model.Response> response) {
@@ -341,12 +362,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         activity.start(string,5000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
     }
 
-
-
     @Override
     public void send() {
-        Call<List<Visit>> list =  ApiClient.getInstance().getApi().visit(new UserPresenter(this.username,this.password));
+        Call<List<Visit>> list =  ApiClient.getInstance().getApi().visit("12345",new UserPresenter(this.username,this.password));
         list.enqueue(new Callback<List<Visit>>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<List<Visit>> call, Response<List<Visit>> response) {
                 addList(response.body());

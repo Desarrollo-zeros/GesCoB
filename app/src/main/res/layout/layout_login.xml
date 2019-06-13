@@ -52,7 +52,6 @@
         style="@style/loginButton"
         android:text="@string/login_text"
         android:layout_gravity="right"
-        android:onClick="onClick"
         android:layout_marginTop="@dimen/loginViewsMargin"/>
 
     <TextView
@@ -64,6 +63,6 @@
         android:text="@string/login_signup_hint"
         android:layout_marginTop="@dimen/loginViewsMargin"
         android:layout_gravity="end"
-        android:onClick="onClick"/>
+        />
 
 </LinearLayout>

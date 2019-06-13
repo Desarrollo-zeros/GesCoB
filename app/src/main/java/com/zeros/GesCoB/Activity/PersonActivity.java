@@ -44,7 +44,7 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
 
      private static final String TAG = "ejemplo";
 
-    ConexionSQLiteHelper conn=new ConexionSQLiteHelper(this);
+    ConexionSQLiteHelper conn;
     private final VisitPresenter visitaPresenter = new VisitPresenter();
     private String document;
     private  OnVisitListener onVisitListener;
@@ -57,6 +57,7 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        conn = new ConexionSQLiteHelper(this);
         setContentView(R.layout.activity_person);
         this.onVisitListener = this;
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -133,6 +134,10 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
             case R.id.nav_close:{
                 activity.start(getString(R.string.destroy_session),1000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
                 activity.destroy(context,LoginActivity.class,conn);
+                break;
+            }
+            case R.id.nav_refresh_vonfig:{
+                this.activity.loader_config(context,new UserPresenter(username,password),getString(R.string.config_auth),conn);
                 break;
             }
         }

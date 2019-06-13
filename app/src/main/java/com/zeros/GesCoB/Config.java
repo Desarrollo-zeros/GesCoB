@@ -23,6 +23,7 @@ public class Config {
     public static final String DB_TABLE_VISIT = "visit";
     public static final String DB_TABLE_VISIT_ID = "id_visita";
 
+
     public static final String CREATE_TABLE_VISIT = "CREATE TABLE "+DB_TABLE_VISIT+" (" +
             "id_visita INTEGER primary key autoincrement, nic integer INTEGER," +
             "nis  INTEGER, departamento  TEXT, municipio TEXT," +
@@ -37,11 +38,21 @@ public class Config {
             "facturas_acordadas INTEGER, pago_datafono   TEXT," +
             "estado_visita  INTEGER,orden INTEGER)";
 
+    public static final String DB_TABLE_CONFIG = "config";
+    public static final String DB_TABLE_CONFIG_ID = "id_config";
+
+    public static final String CREATE_TABLE_CONFIG = "CREATE TABLE "+DB_TABLE_CONFIG+" (" +
+            "id_config INTEGER primary key autoincrement,vcod_gestion TEXT, " +
+            "desc_gestion TEXT, cod_resultado TEXT," +
+            "desc_resultado TEXT, cod_anomalia TEXT, desc_anomalia TEXT)";
+
+
 
     public static final String DROP_TABLE_USER = "DROP TABLE IF EXISTS "+DB_TABLE_USER+" ";
 
     public static final String DROP_TABLE_VISIT = "DROP TABLE IF EXISTS "+DB_TABLE_VISIT+" ";
 
+    public static final String DROP_TABLE_CONFIG = "DROP TABLE IF EXISTS "+DB_TABLE_CONFIG+" ";
 
     public class Querys{
         public static final String QUERY_TABLE_USER_EXITS = "SELECT username, password FROM "+Config.DB_TABLE_USER+" where username = ? and password = ?";

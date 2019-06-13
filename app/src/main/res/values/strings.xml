@@ -19,7 +19,8 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_change_password">Change Password</string>
-    <string name="menu_reload">Loader View</string>
+    <string name="menu_reload_view">Loader View</string>
+    <string name="menu_reload_config">Loader Config</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_tools">Tools</string>
@@ -28,9 +29,12 @@
     <string name="menu_logout">Logout</string>
 
 
+    <string name="error_email">Empty email or invalid Email</string>
     <string name="error_username">Empty username or invalid length must have at least 4 characters</string>
     <string name="error_password">Empty password or invalid length must have at least 4 characters</string>
     <string name="menssage_auth">Authenticating...</string>
+    <string name="send_auth">Send ...</string>
+    <string name="config_auth">Loader Config ...</string>
     <string name="menssage_auth_alert">Username y/o Password invalid</string>
     <string name="menssage_auth_success">Welcome to GesCoB : </string>
     <string name="document">Document</string>
@@ -47,17 +51,21 @@
     <string name="destroy_session">destroying the session ...</string>
     <string name="change_password_text">Change Password</string>
     <string name="change_password_title_text">Option for password change</string>
-    <string name="fotgot_password_title_text">Option for password fotgot</string>
+    <string name="fotgot_password_title_text">Option for fotgot password </string>
     <string name="enter_old_password_text">Enter old Password</string>
     <string name="enter_new_password1_text">Enter new Password</string>
     <string name="enter_new_password2_text">Enter the new password again</string>
     <string name="change_password_button">¿Change Password?</string>
     <string name="cancel_button">Cancel</string>
+    <string name="success_button">Yes</string>
     <string name="password_no_equals">password is not the same</string>
     <string name="change_password_success">Change Password Success</string>
     <string name="search_text">Search ...</string>
     <string name="neighborhood">neighborhood</string>
     <string name="login_text">Login</string>
+    <string name="fotgot_success">Updated password, please check your email</string>
+    <string name="fotgot_error">user and / or email are not valid</string>
+    <string name="question_modal">Are you sure?</string>
 
 
 

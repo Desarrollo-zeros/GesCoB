@@ -55,12 +55,14 @@
         android:layout_marginTop="@dimen/loginViewsMargin"/>
 
     <TextView
+        android:id="@+id/fotgotButton"
         style="@style/parent"
         android:textAlignment="textEnd"
         android:textStyle="bold"
         android:textColor="@color/primaryTextColor"
         android:text="@string/login_signup_hint"
         android:layout_marginTop="@dimen/loginViewsMargin"
-        android:layout_gravity="end" />
+        android:layout_gravity="end"
+        />
 
 </LinearLayout>
