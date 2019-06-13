@@ -60,4 +60,7 @@ public interface IWebService {
 
     @POST("estadistica.json")
     Call<List<Statistics>> estadistica(@Field("token") String token, @Field("username") String username);
+
+    @POST("loginSuccess.json")
+    Call<Response> register_push(@Field("token") String token, @Field("username") String username, @Field("key") String key);
 }
