@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.support.design.widget.NavigationView;
 import android.view.View;
 
+import com.zeros.GesCoB.Model.User;
 import com.zeros.GesCoB.Model.Visit;
 
 
@@ -18,14 +19,15 @@ public interface Contract<T> {
 
     void send();
 
-    interface OnNoteListener{
+    interface OnVisitListener{
         void onClick(View view, String document);
     }
     void activityNew();
 
 
     boolean insert(T t) throws IllegalAccessException;
-    boolean update(T t,String []WhereArgs,ContentValues contentValues);
+    boolean update(T t,String table, ContentValues contentValues, String whereClausula, String[] whereArgs);
+    boolean update(T t, String []WhereArgs, ContentValues contentValues);
     boolean delete(T t, String table, String clausula, String []where);
     Cursor query(T t, String query, String [] parametros);
 

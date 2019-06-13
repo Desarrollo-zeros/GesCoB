@@ -5,10 +5,8 @@ import java.util.List;
 
 public class Config {
    // public static final String baseUrl = "http://gescob.cloudsoluciones.co:81/rest/";
-   public static final String baseUrl = "http://192.168.1.19:81/gescob.cloudsoluciones.co/rest/";
+   public static final String baseUrl = "http://192.168.0.29:81/gescob.cloudsoluciones.co/rest/";
     public static final String DB_NAME = "gescob";
-    public static  List<String> createTable = new ArrayList<>();
-
 
     public static final String DB_TABLE_USER = "user";
     public static final String DB_TABLE_USER_ID = "id";
@@ -27,7 +25,7 @@ public class Config {
 
     public static final String CREATE_TABLE_VISIT = "CREATE TABLE "+DB_TABLE_VISIT+" (" +
             "id_visita INTEGER primary key autoincrement, nic integer INTEGER," +
-            "nis  INTEGER, departamento  TEXT,municipio TEXT," +
+            "nis  INTEGER, departamento  TEXT, municipio TEXT," +
             "corregimiento TEXT,barrio TEXT,tipo_via  TEXT," +
             "nombre_calle  TEXT, duplicador TEXT, nro_via TEXT," +
             "cgv TEXT, direccion TEXT, cliente       TEXT," +

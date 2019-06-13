@@ -2,18 +2,21 @@ package com.zeros.GesCoB.Activity;
 
 
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.Button;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Intent;
 
 import com.zeros.GesCoB.Config;
 import com.zeros.GesCoB.Contract.Activity;
@@ -32,7 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     Button loginButton;
-    TextView _username, _password;
+    TextView _username, _password,fotgotButton;
     private final UserPresenter userPresenter = new UserPresenter();
     public static final String EXTRA_MESSAGE = "com.zeros.GesCoB.panel";
     ConexionSQLiteHelper conn=new ConexionSQLiteHelper(this);
@@ -52,17 +55,53 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         _username = (TextView) findViewById(R.id.editTextUsername);
         _password = (TextView) findViewById(R.id.editTextPassword);
         loginButton = (Button) findViewById(R.id.cirLoginButton);
+        fotgotButton = (TextView) findViewById(R.id.fotgotButton);
         this.loginStart();
         loginButton.setOnClickListener(this);
+
     }
 
 
     @Override
     public void onClick(View v) {
-        boolean valid = validate(_username.getText().toString().toLowerCase(),_password.getText().toString().toLowerCase());
-        if(valid){
-            this.user = new UserPresenter(_username.getText().toString().toLowerCase().trim(),_password.getText().toString().toLowerCase().trim());
-            this.send();
+
+        if(v.getId() == R.id.cirLoginButton){
+            boolean valid = validate(_username.getText().toString().toLowerCase(),_password.getText().toString().toLowerCase());
+            if(valid){
+                this.user = new UserPresenter(_username.getText().toString().toLowerCase().trim(),_password.getText().toString().toLowerCase().trim());
+                this.send();
+            }
+        }else{
+            LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
+            View mView = layoutInflaterAndroid.inflate(R.layout.fotgot_password, null);
+            AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(context,R.style.Theme_AppCompat_DayNight_Dialog_Alert)
+                    .setTitle(getString(R.string.change_password_text))
+                    .setCancelable(false);
+            alertDialogBuilderUserInput.setView(mView);
+
+            final EditText username = (EditText) mView.findViewById(R.id.usernameText);
+            final EditText password = (EditText) mView.findViewById(R.id.emailText);
+
+            alertDialogBuilderUserInput
+                    .setPositiveButton(getString(R.string.change_password_button), new DialogInterface.OnClickListener() {
+                        @Override public void onClick(DialogInterface dialogBox, int id) {}
+                    })
+                    .setNegativeButton(getString(R.string.cancel_button),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogBox, int id) {
+                                    dialogBox.cancel();
+                                }
+                            });
+
+            final AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+            alertDialogAndroid.show();
+            Button button = alertDialogAndroid.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
     }
 
@@ -104,6 +143,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onFailure(Call<com.zeros.GesCoB.Model.Response> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d("network: ", "onFailure: "+t.getMessage());
                 call.cancel();
             }
         });
@@ -126,6 +166,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             valid = true;
         }
         return valid;
+    }
+
+    @Override
+    public boolean update(User user, String table, ContentValues contentValues, String whereClausula, String[] whereArgs) {
+        return false;
     }
 
     @Override

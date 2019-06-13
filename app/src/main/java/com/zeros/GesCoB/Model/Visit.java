@@ -50,14 +50,14 @@ public class Visit extends QuerysLite<Visit> {
 
     }
 
-    public Visit(String cedula, String cliente, String direccion, String estado_suministro, String departamento, String municipio){
+    public Visit(String cedula, String cliente, String direccion, String estado_suministro, String departamento, String municipio, String barrio){
         this.cedula = cedula;
         this.cliente = cliente;
         this.direccion = direccion;
         this.estado_suministro = estado_suministro;
         this.departamento = departamento;
         this.municipio = municipio;
-        //this.barrio = "Dis: "+barrio + "/";
+        this.barrio = barrio;
     }
 
     public Visit(String id_visita, String nic, String nis, String departamento, String municipio, String corregimiento, String barrio, String tipo_via, String nombre_calle, String duplicador, String nro_via, String cgv, String direccion, String cliente, String cedula, String telefono, String tarifa, String estado_suministro, String ruta, String itinerario_lectura, String aol_finca, String medidor, String tipo_aparato, String marca_aparato, float deuda_energia, float deuda_terceros, float deuda_financiada, float facturas_vencidas, float facturas_acordadas, String pago_datafono, float estado_visita, float orden) {

@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zeros.GesCoB.Activity.PersonActivity;
 import com.zeros.GesCoB.Config;
 import com.zeros.GesCoB.Model.User;
 import com.zeros.GesCoB.Presenter.UserPresenter;
@@ -121,7 +120,6 @@ public  class Activity {
                     }
                 })
                 .show();
-
     }
 
 

@@ -2,10 +2,11 @@
     <string name="app_name">GesCoB</string>
 
     <string name="register">REGISTER</string>
-    <string name="login_email_hint">Username</string>
+    <string name="login_username_hint">Username</string>
+    <string name="login_email_hint">Email</string>
     <string name="login_password_hint">Password</string>
     <string name="signup_login_hint">Already have an account? Sign In</string>
-    <string name="login_signup_hint">Don\'t have an account? Sign Up</string>
+    <string name="login_signup_hint">Fotgot Password</string>
     <string name="login_name_hint">Name</string>
     <string name="login_mobile_number_hint">Mobile Number</string>
     <string name="title_activity_main">Dashboard</string>
@@ -46,12 +47,18 @@
     <string name="destroy_session">destroying the session ...</string>
     <string name="change_password_text">Change Password</string>
     <string name="change_password_title_text">Option for password change</string>
+    <string name="fotgot_password_title_text">Option for password fotgot</string>
     <string name="enter_old_password_text">Enter old Password</string>
     <string name="enter_new_password1_text">Enter new Password</string>
     <string name="enter_new_password2_text">Enter the new password again</string>
     <string name="change_password_button">¿Change Password?</string>
     <string name="cancel_button">Cancel</string>
     <string name="password_no_equals">password is not the same</string>
+    <string name="change_password_success">Change Password Success</string>
+    <string name="search_text">Search ...</string>
+    <string name="neighborhood">neighborhood</string>
+    <string name="login_text">Login</string>
+
 
 
 </resources>

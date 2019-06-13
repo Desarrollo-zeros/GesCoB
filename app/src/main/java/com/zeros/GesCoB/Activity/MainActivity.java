@@ -2,18 +2,24 @@ package com.zeros.GesCoB.Activity;
 
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
@@ -21,14 +27,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 
 import com.zeros.GesCoB.Activity.Adapter.VisitAdapter;
 import com.zeros.GesCoB.Config;
@@ -41,6 +44,7 @@ import com.zeros.GesCoB.Presenter.VisitPresenter;
 import com.zeros.GesCoB.R;
 import com.zeros.GesCoB.database.ConexionSQLiteHelper;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +52,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Contract<Visit>, Contract.OnNoteListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Contract<Visit>, Contract.OnVisitListener, View.OnClickListener, VisitAdapter.VisitAdapterListener {
 
      private static final String TAG = "ejemplo";
     public static final String EXTRA_MESSAGE = "com.zeros.GesCoB.person";
@@ -58,17 +62,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int id;
     private String username, password;
     private RecyclerView reyclerViewVisit;
-    private  Contract.OnNoteListener onNoteListener;
+    private  Contract.OnVisitListener onVisitListener;
     Activity activity = new Activity();
     Context context;
     String string;
+    private VisitAdapter mAdapter;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_main);
-        this.onNoteListener = this;
+        this.onVisitListener = this;
         this.id = getIntent().getExtras().getInt("id");
         this.username = getIntent().getExtras().getString("username");
         this.password = getIntent().getExtras().getString("password");
@@ -99,6 +105,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // use a linear layout manager
         reyclerViewVisit.setLayoutManager(new LinearLayoutManager(this));
+
+        // white background notification bar
+        whiteNotificationBar(reyclerViewVisit);
+
         string = getString(R.string.menssage_loader_view);
         activity.start(string,3000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
         Cursor cursor = this.query(visitaPresenter,"SELECT *FROM "+Config.DB_TABLE_VISIT,null);
@@ -124,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                    cursor.getString(12),
                    cursor.getString(17),
                    cursor.getString(3),
-                   cursor.getString(4)
+                   cursor.getString(4),
+                   cursor.getString(6)
            ));
        }
        this.addList(visitList);
@@ -137,32 +148,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public List<VisitPresenter> getData(List<Visit> visitList){
         List<VisitPresenter> visitaPresenters = new ArrayList<>();
         for (Visit v : visitList){
-            visitaPresenters.add(new VisitPresenter(v.getCedula(),v.getCliente(),v.getDireccion(),v.getEstado_suministro(),v.getDepartamento(),v.getMunicipio()));
+            visitaPresenters.add(new VisitPresenter(v.getCedula(),v.getCliente(),v.getDireccion(),v.getEstado_suministro(),v.getDepartamento(),v.getMunicipio(),v.getBarrio()));
         }
         return visitaPresenters;
     }
 
 
     public void addList(List<Visit> visitList){
-        reyclerViewVisit.setAdapter(new VisitAdapter(getData(visitList),onNoteListener));
+        mAdapter = new VisitAdapter(getData(visitList),onVisitListener,this);
+        reyclerViewVisit.setAdapter(mAdapter);
     }
 
 
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        // close search view on back button pressed
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+            return;
         }
+        super.onBackPressed();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search)
+                .getActionView();
+        searchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // listening to search query text change
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // filter recycler view when query submitted
+                mAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                // filter recycler view when text is changed
+                mAdapter.getFilter().filter(query);
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -215,17 +253,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 final EditText newPassword2 = (EditText) mView.findViewById(R.id.newPassword2Text);
                 alertDialogBuilderUserInput
                         .setPositiveButton(getString(R.string.change_password_button), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogBox, int id) {
-                                if(oldPassword.getText().toString().equals(password)){
-                                    if(newPassword1.getText().toString().equals(newPassword2.getText().toString()) && newPassword1.getText().toString().length() > 4){
-
-                                    }else{
-                                        activity.menssage(getString(R.string.password_no_equals), Color.RED, context);
-                                    }
-                                }else{
-                                    activity.menssage(getString(R.string.error_password), Color.RED, context);
-                                }
-                            }
+                            @Override public void onClick(DialogInterface dialogBox, int id) {}
                         })
                         .setNegativeButton(getString(R.string.cancel_button),
                                 new DialogInterface.OnClickListener() {
@@ -234,8 +262,71 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     }
                                 });
 
-                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                final AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
                 alertDialogAndroid.show();
+
+                Button button = alertDialogAndroid.getButton(AlertDialog.BUTTON_POSITIVE);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                        if(oldPassword.getText().toString().equals(password)){
+                            oldPassword.setError(null,null);
+                            if(newPassword1.getText().toString().equals(newPassword2.getText().toString()) && newPassword1.getText().toString().length() > 4){
+                                newPassword1.setError(null,null);
+                                newPassword2.setError(null,null);
+
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder
+                                        .setMessage("Are you sure?")
+                                        .setPositiveButton("Yes",  new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(final DialogInterface dialog, int id) {
+                                                Call<com.zeros.GesCoB.Model.Response> list = ApiClient.getInstance().getApi().changePassword(username,password,newPassword1.getText().toString());
+                                                list.enqueue(new Callback<com.zeros.GesCoB.Model.Response>() {
+                                                    @Override
+                                                    public void onResponse(Call<com.zeros.GesCoB.Model.Response> call, Response<com.zeros.GesCoB.Model.Response> response) {
+                                                        String string = getString(R.string.menssage_auth);
+                                                        activity.start(string,2000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
+                                                        if(!response.body().isError()){
+                                                            activity.menssage(getString(R.string.change_password_success),Color.GREEN,context);
+                                                            ContentValues contentValues = new ContentValues();
+                                                            contentValues.put("password",newPassword1.getText().toString());
+                                                           int i = new UserPresenter().update(new UserPresenter(username,newPassword1.getText().toString()),Config.DB_TABLE_USER,contentValues,null,null,conn);
+                                                           if(i>0)
+                                                               Toast.makeText(context,"Password Update",Toast.LENGTH_LONG).show();
+                                                        }
+                                                        alertDialogAndroid.dismiss();
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<com.zeros.GesCoB.Model.Response> call, Throwable t) {
+                                                        Toast.makeText(getBaseContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                                                        call.cancel();
+                                                        alertDialogAndroid.dismiss();
+                                                    }
+                                                });
+                                            }
+                                        })
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog,int id) {
+                                                dialog.cancel();
+                                                alertDialogAndroid.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }else{
+                                activity.menssage(getString(R.string.password_no_equals), Color.RED, context);
+                                newPassword1.setError(getString(R.string.password_no_equals));
+                                newPassword2.setError(getString(R.string.password_no_equals));
+                            }
+                        }else{
+                            oldPassword.setError(getString(R.string.error_password));
+                            activity.menssage(getString(R.string.error_password), Color.RED, context);
+                        }
+                    }
+                });
+                break;
             }
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -249,6 +340,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.send();
         activity.start(string,5000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
     }
+
+
 
     @Override
     public void send() {
@@ -288,6 +381,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean update(Visit visit, String table, ContentValues contentValues, String whereClausula, String[] whereArgs) {
+        return false;
+    }
+
+    @Override
     public boolean update(Visit visit, String[] WhereArgs, ContentValues contentValues) {
         return false;
     }
@@ -311,6 +409,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onClick(View v) {
 
+    }
+
+    private void whiteNotificationBar(View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int flags = view.getSystemUiVisibility();
+            flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            view.setSystemUiVisibility(flags);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
+    }
+
+    @Override
+    public void onContactSelected(VisitPresenter visitPresenter) {
+        Toast.makeText(getApplicationContext(), "Selected: " + visitPresenter.getCedula() + ", " + visitPresenter.getCliente(), Toast.LENGTH_LONG).show();
     }
 }
 

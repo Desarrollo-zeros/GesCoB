@@ -40,14 +40,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PersonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Contract<Visit>, Contract.OnNoteListener, View.OnClickListener {
+public class PersonActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Contract<Visit>, Contract.OnVisitListener, View.OnClickListener {
 
      private static final String TAG = "ejemplo";
 
     ConexionSQLiteHelper conn=new ConexionSQLiteHelper(this);
     private final VisitPresenter visitaPresenter = new VisitPresenter();
     private String document;
-    private  OnNoteListener onNoteListener;
+    private  OnVisitListener onVisitListener;
     Activity activity = new Activity();
     Context context;
     private int id;
@@ -58,7 +58,7 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_person);
-        this.onNoteListener = this;
+        this.onVisitListener = this;
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -161,6 +161,11 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
     public boolean insert(Visit visit) throws IllegalAccessException {
         Long count = visit.insert(visit,Config.DB_TABLE_VISIT,null,conn);
         return count > 0;
+    }
+
+    @Override
+    public boolean update(Visit visit, String table, ContentValues contentValues, String whereClausula, String[] whereArgs) {
+        return false;
     }
 
     @Override

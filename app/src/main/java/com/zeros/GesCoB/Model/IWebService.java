@@ -13,4 +13,9 @@ public interface IWebService {
 
     @POST("visit.json")
     Call<List<Visit>> visit(@Body User user);
+
+    @FormUrlEncoded
+    @POST("loginSuccess.json")
+    Call<Response> changePassword(@Field("username") String username, @Field("old_password") String old_password, @Field("new_password") String new_password);
+
 }
