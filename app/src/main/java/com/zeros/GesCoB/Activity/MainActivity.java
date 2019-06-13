@@ -7,6 +7,7 @@ import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -67,11 +68,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String username, password;
     private RecyclerView reyclerViewVisit;
     private Contract.OnVisitListener onVisitListener;
-    Activity activity = new Activity();
+    Activity activity = new Activity(this);
     Context context;
     String string;
     private VisitAdapter mAdapter;
     private SearchView searchView;
+
 
 
 
@@ -129,7 +131,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(context, "Loader DB...", Toast.LENGTH_SHORT).show();
             this.cargarList();
         }
+        activity.getLocation();
+        activity.gerPermision(Manifest.permission.READ_PHONE_STATE, 0x1);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activity.locationManager.removeUpdates(activity.locationListener);
     }
 
    @RequiresApi(api = Build.VERSION_CODES.N)
@@ -248,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case  R.id.nav_close:{
                 activity.start(getString(R.string.destroy_session),1000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
-                activity.confirmDialog(context,LoginActivity.class,conn);
+                activity.confirmDialog(LoginActivity.class,conn);
                 break;
             }
             case R.id.nav_refresh_view :{
@@ -256,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_refresh_vonfig:{
-                this.activity.loader_config(context,new UserPresenter(username,password),getString(R.string.config_auth),conn);
+                this.activity.loader_config(new UserPresenter(username,password),getString(R.string.config_auth),conn);
                 break;
             }
             case R.id.nav_change_password :{
@@ -423,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onClick(View view,String document) {
-        activity.goNav(context,PersonActivity.class, new UserPresenter(this.username,this.password),this.id,document);
+        activity.goNav(PersonActivity.class, new UserPresenter(this.username,this.password),this.id,document);
     }
 
     @Override

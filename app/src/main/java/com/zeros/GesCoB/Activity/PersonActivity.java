@@ -48,7 +48,7 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
     private final VisitPresenter visitaPresenter = new VisitPresenter();
     private String document;
     private  OnVisitListener onVisitListener;
-    Activity activity = new Activity();
+    Activity activity = new Activity(this);
     Context context;
     private int id;
     private String username, password;
@@ -128,16 +128,16 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
         int id = item.getItemId();
         switch (id){
             case R.id.nav_home:{
-                activity.confirmDialog(context,MainActivity.class, new UserPresenter(this.username,this.password),this.id);
+                activity.confirmDialog(MainActivity.class, new UserPresenter(this.username,this.password),this.id);
                 break;
             }
             case R.id.nav_close:{
                 activity.start(getString(R.string.destroy_session),1000,R.style.Theme_AppCompat_DayNight_Dialog_Alert,context);
-                activity.destroy(context,LoginActivity.class,conn);
+                activity.destroy(LoginActivity.class,conn);
                 break;
             }
             case R.id.nav_refresh_vonfig:{
-                this.activity.loader_config(context,new UserPresenter(username,password),getString(R.string.config_auth),conn);
+                this.activity.loader_config(new UserPresenter(username,password),getString(R.string.config_auth),conn);
                 break;
             }
         }

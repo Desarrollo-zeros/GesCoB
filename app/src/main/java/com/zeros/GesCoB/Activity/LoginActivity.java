@@ -49,10 +49,7 @@ public class LoginActivity extends AppCompatActivity implements Contract<User>, 
     private ConfigPresenter configPresenter = new ConfigPresenter();
 
 
-    Activity activity = new Activity();
-
-
-
+    Activity activity = new Activity(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -287,7 +284,7 @@ public class LoginActivity extends AppCompatActivity implements Contract<User>, 
             toast.show();
         }else{
             this.insert(this.user);
-            this.activity.loader_config(context,userPresenter,getString(R.string.config_auth),conn);
+            this.activity.loader_config(userPresenter,getString(R.string.config_auth),conn);
             this.activityNew();
         }
     }

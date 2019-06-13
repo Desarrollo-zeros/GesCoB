@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Config {
    // public static final String baseUrl = "http://gescob.cloudsoluciones.co:81/rest/";
-   public static final String baseUrl = "http://192.168.0.29:81/gescob.cloudsoluciones.co/rest/";
+   public static final String baseUrl = "http://172.16.96.133:81/gescob.cloudsoluciones.co/rest/";
     public static final String DB_NAME = "gescob";
 
     public static final String DB_TABLE_USER = "user";

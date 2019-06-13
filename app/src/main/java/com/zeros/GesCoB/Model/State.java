@@ -2,12 +2,26 @@ package com.zeros.GesCoB.Model;
 
 import java.util.Date;
 
-public class State {
+public class State extends GeoLocation {
     private int id_estado;
-    private Double latitud;
-    private Double longitud;
     private Date fecha;
 
+    public State(){
+        super();
+    }
+
+    public State(int id_estado, Date fecha) {
+        super();
+        this.id_estado = id_estado;
+        this.fecha = fecha;
+    }
+
+
+    public State(int id_estado, Date fecha, double latitud, double longitud) {
+        super(latitud,longitud);
+        this.id_estado = id_estado;
+        this.fecha = fecha;
+    }
 
     public int getId_estado() {
         return id_estado;
@@ -17,21 +31,6 @@ public class State {
         this.id_estado = id_estado;
     }
 
-    public Double getLatitud() {
-        return latitud;
-    }
-
-    public void setLatitud(Double latitud) {
-        this.latitud = latitud;
-    }
-
-    public Double getLongitud() {
-        return longitud;
-    }
-
-    public void setLongitud(Double longitud) {
-        this.longitud = longitud;
-    }
 
     public Date getFecha() {
         return fecha;
@@ -39,5 +38,15 @@ public class State {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    @Override
+    public String toString() {
+        return "State{" +
+                "id_estado=" + id_estado +
+                ", latitud=" + latitud +
+                ", longitud=" + longitud +
+                ", fecha=" + fecha +
+                '}';
     }
 }
