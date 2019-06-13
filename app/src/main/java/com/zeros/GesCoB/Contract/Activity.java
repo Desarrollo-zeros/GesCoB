@@ -180,7 +180,7 @@ public class Activity extends AppCompatActivity implements LocationListener {
     }
 
     public void loader_config(final UserPresenter userPresenter, final String string, final ConexionSQLiteHelper conn) {
-        Call<List<com.zeros.GesCoB.Model.Config>> list = ApiClient.getInstance().getApi().config("12345", userPresenter);
+        Call<List<com.zeros.GesCoB.Model.Config>> list = ApiClient.getInstance().getApi().config(userPresenter);
         list.enqueue(new Callback<List<com.zeros.GesCoB.Model.Config>>() {
             @Override
             public void onResponse(Call<List<com.zeros.GesCoB.Model.Config>> call, Response<List<com.zeros.GesCoB.Model.Config>> response) {

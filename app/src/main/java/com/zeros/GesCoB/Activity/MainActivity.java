@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_refresh_vonfig:{
-                this.activity.loader_config(new UserPresenter(username,password),getString(R.string.config_auth),conn);
+                this.activity.loader_config(new UserPresenter(username,password,"12345"),getString(R.string.config_auth),conn);
                 break;
             }
             case R.id.nav_change_password :{
@@ -373,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void send() {
-        Call<List<Visit>> list =  ApiClient.getInstance().getApi().visit("12345",new UserPresenter(this.username,this.password));
+        Call<List<Visit>> list =  ApiClient.getInstance().getApi().visit(new UserPresenter(this.username,this.password,"12345"));
         list.enqueue(new Callback<List<Visit>>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override

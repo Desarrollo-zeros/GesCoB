@@ -137,7 +137,7 @@ public class PersonActivity extends AppCompatActivity implements NavigationView.
                 break;
             }
             case R.id.nav_refresh_vonfig:{
-                this.activity.loader_config(new UserPresenter(username,password),getString(R.string.config_auth),conn);
+                this.activity.loader_config(new UserPresenter(username,password,"12345"),getString(R.string.config_auth),conn);
                 break;
             }
         }

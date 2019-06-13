@@ -10,10 +10,10 @@ import retrofit2.http.*;
 public interface IWebService {
 
     @POST("loginSuccess.json")
-    Call<Response> login(@Field("token") String tokent ,@Body User user);
+    Call<Response> login(@Body User user);
 
     @POST("visit.json")
-    Call<List<Visit>> visit(@Field("token") String tokent ,@Body User user);
+    Call<List<Visit>> visit(@Body User user);
 
     @FormUrlEncoded
     @POST("loginSuccess.json")
@@ -25,21 +25,29 @@ public interface IWebService {
 
 
     @POST("config.json")
-    Call<List<Config>> config(@Field("token") String tokent ,@Body User user);
+    Call<List<Config>> config(@Body User user);
 
 
-    @POST("config.json")
+    @FormUrlEncoded
+    @POST("change_state.json")
     Call<State> change_state(@Field("token") String tokent, @Field("id_visita") String id_visita, @Body State state,@Field("username") String username);
 
+    @FormUrlEncoded
     @POST("loginSuccess.json")
     Call<Response> tracker(@Field("token") String tokent, @Field("id_visita") String id_visita, @Field("imei") String imei, @Field("latitud") double latitud, @Field("longitud") double longitud, @Field("fecha") Date fecha, @Field("estado") String estado);
 
+
+    @FormUrlEncoded
     @POST("checklist_security.json")
     Call<List<checklist_Security>> checklist_security(@Field("token") String tokent);
 
+
+    @FormUrlEncoded
     @POST("loginSuccess.json")
     Call<Response> security(@Field("token") String tokent, @Field("id_visita") int id_visita, @Field("username") String username, @Field("fecha") Date fecha, @Body() List<Security> securityList);
 
+
+    @FormUrlEncoded
     @POST("loginSuccess.json")
     Call<Response> capture(@Field("token") String tokent, @Field("id_visita") int id_visita, @Field("fecha") Date fecha,
                            @Field("gestion_id") String gestion_id, @Field("resultado_id") String resultado_id, @Field("anomalia_id") String anomalia_id,
@@ -51,16 +59,22 @@ public interface IWebService {
                            @Field("pago_datafono") boolean pago_datafono, @Field("laltitud") double laltitud, @Field("longitud") double longitud, @Body List<Photo> photoList);
 
 
+
+    @FormUrlEncoded
     @POST("compromisos.json")
     Call<List<Compromise>> comprimesos(@Field("token") String token, @Field("usename") String username);
 
+
+    @FormUrlEncoded
     @POST("loginSuccess.json")
     Call<Response> auto_generate_visita(@Field("token") String token, @Field("nic") String nic, @Field("username") String username);
 
 
+    @FormUrlEncoded
     @POST("estadistica.json")
     Call<List<Statistics>> estadistica(@Field("token") String token, @Field("username") String username);
 
+    @FormUrlEncoded
     @POST("loginSuccess.json")
     Call<Response> register_push(@Field("token") String token, @Field("username") String username, @Field("key") String key);
 }

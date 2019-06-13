@@ -195,7 +195,7 @@ public class LoginActivity extends AppCompatActivity implements Contract<User>, 
 
     @Override
     public void send() {
-        Call<com.zeros.GesCoB.Model.Response> list =  ApiClient.getInstance().getApi().login("123456",user);
+        Call<com.zeros.GesCoB.Model.Response> list =  ApiClient.getInstance().getApi().login(new UserPresenter(user.getUsername(),user.getPassword(),"12345"));
         list.enqueue(new Callback<com.zeros.GesCoB.Model.Response>() {
             @Override
             public void onResponse(Call<com.zeros.GesCoB.Model.Response> call, Response<com.zeros.GesCoB.Model.Response> response) {
@@ -284,7 +284,7 @@ public class LoginActivity extends AppCompatActivity implements Contract<User>, 
             toast.show();
         }else{
             this.insert(this.user);
-            this.activity.loader_config(userPresenter,getString(R.string.config_auth),conn);
+            this.activity.loader_config(new UserPresenter(user.getUsername(),user.getPassword(),"12345"),getString(R.string.config_auth),conn);
             this.activityNew();
         }
     }
